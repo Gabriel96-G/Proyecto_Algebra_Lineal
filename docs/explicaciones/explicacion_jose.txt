@@ -1,0 +1,44 @@
+================================================================================
+EXPLICACION MATEMATICA — JOSE PICADO
+Modulo: Representacion de Objetos 2D (Actividad #1)
+PixelForge MathEngine 2D v1.0
+================================================================================
+
+1. FORMATO MATRICIAL 2xN
+------------------------------------------------------------------------------
+Cada figura geometrica se representa como una matriz de 2 filas y N columnas:
+
+    P = [ p1  p2  ...  pN ]
+
+Donde cada columna p_i = (x_i, y_i)^T es un punto en R^2.
+
+Ventajas del formato:
+  - Las columnas son vectores columna, alineados con la notacion de algebra
+    lineal clasica.
+  - Permite aplicar transformaciones lineales mediante multiplicacion
+    por la izquierda: P' = M * P, donde M es una matriz 2x2.
+  - Ej: rotacion de 90 grados → R * P con R = [[0,-1],[1,0]]
+
+2. REPRESENTACION DE FIGURAS
+------------------------------------------------------------------------------
+  - Cuadrado: 4 vertices equidistantes formando angulos rectos.
+    Matriz 2x4 con vertices en orden antihorario.
+
+  - Triangulo: 3 vertices. La altura determina la coordenada y del
+    vertice superior, la base determina el ancho.
+
+  - Rectangulo: 4 vertices. Similar al cuadrado pero con ancho != alto.
+
+3. OPERACIONES SOPORTADAS
+------------------------------------------------------------------------------
+  - clonar(): Copia profunda usando np.copy() para evitar aliasing.
+    Si A y B comparten memoria, modificar A afectaria a B.
+    np.copy() reserva nueva memoria y copia todos los valores.
+
+  - obtener_xy(): Descompone la matriz 2xN en dos arrays planos (xs, ys).
+    Util para graficar con matplotlib: plt.plot(xs, ys).
+
+  - to_lista_tuplas(): Convierte la matriz a formato [(x1,y1), ...].
+    Util para reportes y depuracion.
+
+================================================================================
