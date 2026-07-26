@@ -9,6 +9,7 @@ from objetos import (
     crear_triangulo,
     crear_rectangulo,
 )
+from analisis_vectorial import AnalisadorVectorial
 
 print("=" * 60)
 print("TEST: Caso 1 - Crear cuadrado y verificar coordenadas")
@@ -99,5 +100,87 @@ print("[OK] Todas las verificaciones adicionales pasaron")
 
 print()
 print("=" * 60)
-print("TODOS LOS TEST PASARON")
+print("TEST: es_linealmente_independiente")
+print("=" * 60)
+
+v_ld = Objeto2D([(0,0), (1,0), (0,1)], nombre="LD_test")
+av = AnalisadorVectorial(v_ld)
+assert av.es_linealmente_independiente() == False
+print(f"[(0,0),(1,0),(0,1)] LI? {av.es_linealmente_independiente()}")
+
+v_li = Objeto2D([(1,0), (0,1)], nombre="LI_test")
+av2 = AnalisadorVectorial(v_li)
+assert av2.es_linealmente_independiente() == True
+print(f"[(1,0),(0,1)] LI? {av2.es_linealmente_independiente()}")
+
+v_ld2 = Objeto2D([(1,0), (2,0)], nombre="LD2_test")
+av3 = AnalisadorVectorial(v_ld2)
+assert av3.es_linealmente_independiente() == False
+print(f"[(1,0),(2,0)] LI? {av3.es_linealmente_independiente()}")
+
+print("[OK] es_linealmente_independiente funciona")
+
+print()
+print("=" * 60)
+print("TEST: encontrar_base + calcular_dimension (6 puntos en R2)")
+print("=" * 60)
+
+seis_puntos = Objeto2D([
+    (1, 0), (0, 1), (2, 0), (0, 2), (1, 1), (3, 0)
+], nombre="6puntos")
+av4 = AnalisadorVectorial(seis_puntos)
+base = av4.encontrar_base()
+dim = av4.calcular_dimension()
+print(f"Base ({base.shape[0]} vectores):\n{base}")
+print(f"Dimension: {dim}")
+assert base.shape[0] == 2
+assert dim == 2
+print("[OK] Base y dimension correctas (dim=2 en R2)")
+
+print()
+print("=" * 60)
+print("TEST: detectar_redundantes")
+print("=" * 60)
+
+redundantes = av4.detectar_redundantes()
+print(f"Indices redundantes: {redundantes}")
+assert len(redundantes) >= 4
+print("[OK] Redundancia detectada")
+
+print()
+print("=" * 60)
+print("TEST: verificar_cierre_suma y verificar_cierre_escalar")
+print("=" * 60)
+
+base_ej = Objeto2D([(1,0), (0,1), (2,2)], nombre="base_ej")
+av5 = AnalisadorVectorial(base_ej)
+cs = av5.verificar_cierre_suma()
+ce = av5.verificar_cierre_escalar()
+print(f"Cierre suma: {cs}, Cierre escalar: {ce}")
+assert cs == True
+assert ce == True
+print("[OK] Cierre de subespacio verificado")
+
+print()
+print("=" * 60)
+print("TEST: Triangulo con punto interior (redundante)")
+print("=" * 60)
+
+tri_centro = Objeto2D([
+    (0, 0), (2, 0), (1, 1.732), (1, 0.577)
+], nombre="Triangulo+centro")
+av6 = AnalisadorVectorial(tri_centro)
+dim6 = av6.calcular_dimension()
+base6 = av6.encontrar_base()
+red6 = av6.detectar_redundantes()
+print(f"Dimension: {dim6}")
+print(f"Base:\n{base6}")
+print(f"Redundantes (indices): {red6}")
+assert dim6 == 2
+assert 3 in red6
+print("[OK] Punto interior detectado como redundante")
+
+print()
+print("=" * 60)
+print("TODOS LOS TESTS PASARON")
 print("=" * 60)
