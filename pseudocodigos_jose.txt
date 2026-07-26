@@ -1,0 +1,77 @@
+================================================================================
+PSEUDOCODIGOS — JOSE PICADO
+Módulo: Representacion de Objetos 2D (Actividad #1)
+PixelForge MathEngine 2D v1.0
+================================================================================
+
+------------------------------------------------------------------------------
+1. CONVERTIR UNA LISTA DE TUPLAS A MATRIZ 2xN
+------------------------------------------------------------------------------
+Proposito: Transformar una lista de pares ordenados (x, y) en una matriz
+           de 2 filas x N columnas, donde cada columna es un punto.
+
+Entrada: puntos — lista de tuplas [(x1,y1), (x2,y2), ..., (xN,yN)]
+Salida:  matriz numpy de forma (2, N), tipo float64
+
+ALGORITMO:
+1.  Recibir lista de tuplas [(x1,y1), (x2,y2), ..., (xN,yN)]
+2.  Convertir la lista a un arreglo numpy de 2 dimensiones:
+      arr ← np.array(puntos, dtype=np.float64)
+3.  Verificar que el arreglo resultante tenga forma (N, 2):
+      Si arr.ndim != 2 o arr.shape[1] != 2:
+          Lanzar error: "La lista debe contener pares (x, y)"
+4.  Transponer el arreglo para obtener forma (2, N):
+      matriz ← arr.T
+5.  Devolver matriz
+
+Ejemplo:
+    Entrada: [(0,0), (2,0), (2,2), (0,2)]
+    arr (Nx2): [[0,0], [2,0], [2,2], [0,2]]
+    matriz (2xN): [[0,2,2,0], [0,0,2,2]]
+
+------------------------------------------------------------------------------
+2. CLONAR UN OBJETO (COPIA PROFUNDA DE LA MATRIZ)
+------------------------------------------------------------------------------
+Proposito: Crear una copia independiente de un Objeto2D, de modo que
+           modificar el original no afecte a la copia y viceversa.
+
+Entrada: objeto — instancia de Objeto2D
+Salida:  nuevo_objeto — nueva instancia de Objeto2D con los mismos datos
+
+ALGORITMO:
+1.  Obtener la matriz interna de puntos del objeto original:
+      matriz_original ← objeto.puntos
+2.  Crear una copia profunda (nuevo bloque de memoria) de la matriz:
+      copia_matriz ← np.copy(matriz_original)
+3.  Crear un nuevo Objeto2D con la copia y un nombre modificado:
+      nuevo_objeto ← Objeto2D(copia_matriz,
+                               nombre=objeto.nombre + "_copia")
+4.  Devolver nuevo_objeto
+
+Nota: Se usa np.copy() en lugar de una asignacion directa porque
+      en Python la asignacion solo copia la referencia. np.copy()
+      reserva nueva memoria y copia todos los valores, garantizando
+      que las modificaciones en un objeto no afecten al otro.
+
+Ejemplo:
+    Original: Cuadrado con puntos [[0,2,2,0], [0,0,2,2]]
+    Copia:    Cuadrado_copia → misma matriz pero en memoria distinta
+    Si se modifica Original.puntos[0,0] = 99, la Copia no cambia.
+
+================================================================================
+EXPLICACION DEL FORMATO 2xN
+================================================================================
+Se eligio el formato 2 filas x N columnas porque:
+1.  Cada columna representa un punto (x, y), lo cual es intuitivo
+    para operaciones de algebra lineal (columnas = vectores).
+2.  Facilita la multiplicacion por matrices de transformacion 2x2:
+    M(2x2) * P(2xN) = P'(2xN) → transforma todos los puntos a la vez.
+3.  Es el formato estandar en graficos por computadora para representar
+    vertices de poligonos.
+
+El metodo _convertir_a_matriz acepta tres formatos de entrada:
+  - ndarray (2, N): se usa directamente.
+  - ndarray (N, 2): se transpone automaticamente.
+  - lista de tuplas: se convierte a ndarray y luego se transpone.
+
+================================================================================

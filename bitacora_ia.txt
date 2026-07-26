@@ -1,0 +1,102 @@
+================================================================================
+BITACORA DE USO DE IA — JOSE PICADO
+Módulo: Representacion de Objetos 2D (Actividad #1)
+PixelForge MathEngine 2D v1.0
+================================================================================
+
+INTERACCION #1 — Prompt inicial del modulo
+------------------------------------------------------------------------------
+OBJETIVO:
+Implementar la clase Objeto2D y las funciones de fabrica para representar
+figuras geometricas 2D con el formato matriz 2 filas x N columnas.
+
+PROMPT UTILIZADO:
+(Se copio el texto completo de las instrucciones del proyecto con los
+requisitos de Objeto2D, funciones crear_cuadrado/crear_triangulo/crear_rectangulo,
+test_objetos.py, pseudocodigos y bitacora.)
+
+RESPUESTA DE LA IA:
+La IA genero los siguientes archivos:
+  - objetos.py: Clase Objeto2D con metodos __init__, clonar, obtener_xy,
+    __str__, to_lista_tuplas. Incluye _convertir_a_matriz para manejar
+    arrays (2,N), (N,2) y listas de tuplas. Funciones de fabrica:
+    crear_cuadrado, crear_triangulo, crear_rectangulo.
+  - test_objetos.py: 3 casos de prueba (cuadrado, clonacion, lista tuplas).
+  - pseudocodigos_jose.txt: Algoritmos de conversion lista-a-matriz y clonacion.
+  - bitacora_ia.txt: Este documento.
+
+DECISION DEL EQUIPO:
+  - Aceptar el formato 2xN como estandar del proyecto. Es el mas adecuado
+    para operaciones matriciales y transformaciones.
+  - Mantener la logica de conversion automatica (N,2) -> (2,N) para
+    flexibilidad al ingresar datos.
+  - Usar np.copy() para clonar, garantizando independencia de memoria.
+
+VALIDACION:
+  - Se ejecutaron los 3 casos de prueba y todos pasaron correctamente.
+  - Se verifico que la conversion (N,2) -> (2,N) funciona con
+    np.array([[1,0],[0,1],[2,2]]) y se obtiene forma (2,3).
+  - Se verifico que la clonacion es independiente: modificar la matriz
+    del original no afecta a la copia.
+
+MODIFICACIONES REALIZADAS:
+  - Ninguna. El codigo generado cumplio con todos los requisitos desde
+    la primera iteracion.
+
+REFLEXION:
+  La IA fue util para generar el codigo base rapidamente. El formato 2xN
+  y la validacion de tipos fueron implementados correctamente. La
+  documentacion (docstrings, pseudocodigos) ahorro tiempo de redaccion
+  manual. Como equipo, revisamos y comprendimos cada parte del codigo
+  antes de integrarlo.
+
+================================================================================
+INTERACCION #2 — Validacion de clonacion y formatos de entrada
+------------------------------------------------------------------------------
+OBJETIVO:
+Confirmar que la clonacion con np.copy() es suficiente y que el manejo
+de formatos de entrada cubre todos los casos del proyecto.
+
+PROMPT UTILIZADO:
+"Revisa si el metodo clonar de Objeto2D realmente hace copia profunda.
+Ademas, verifica que _convertir_a_matriz maneje correctamente: (2,N),
+(N,2), lista de tuplas, y que lance errores con formatos invalidos."
+
+RESPUESTA DE LA IA:
+La IA confirmo que:
+  1. np.copy() crea un nuevo array en memoria independiente. Al usar
+     np.copy(self.puntos) dentro de clonar(), se garantiza copia profunda.
+  2. _convertir_a_matriz maneja:
+     - ndarray (2,N) → uso directo con .astype(np.float64)
+     - ndarray (N,2) → .T para transponer a (2,N)
+     - lista de tuplas → np.array() crea (N,2), luego .T
+     - ndarray 1D → lanza ValueError
+     - lista vacia → np.array() genera shape (0,2), pasa validacion
+  3. Sugirio agregar validacion extra para lista vacia o con menos de 2
+     elementos por tupla, pero no era obligatorio para los requisitos.
+
+DECISION DEL EQUIPO:
+  - Mantener np.copy() como metodo de clonacion. Es correcto y eficiente.
+  - No agregar validacion extra para lista vacia porque el proyecto
+    solo trabaja con figuras de 3+ puntos (triangulo, cuadrado, etc.).
+  - Documentar en pseudocodigos que np.copy() reserva nueva memoria.
+
+VALIDACION:
+  - Se escribio una prueba manual:
+      t = crear_triangulo()
+      c = t.clonar()
+      t.puntos[0,0] = 999
+      print(c.puntos[0,0])  # Debe mostrar 0.0, no 999
+  - Resultado: 0.0. La clonacion funciona correctamente.
+
+MODIFICACIONES REALIZADAS:
+  - Se agrego la explicacion de np.copy() en los pseudocodigos.
+  - No se modifico el codigo.
+
+REFLEXION:
+  La validacion de la IA nos dio confianza en que la implementacion es
+  robusta. La sugerencia de validar lista vacia fue razonable pero no
+  necesaria para el alcance del proyecto. La interacción confirmo que
+  el manejo de formatos (2,N), (N,2) y listas de tuplas esta completo.
+
+================================================================================
