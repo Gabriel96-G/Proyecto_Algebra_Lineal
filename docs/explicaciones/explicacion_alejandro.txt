@@ -1,0 +1,195 @@
+================================================================================
+EXPLICACIÓN MATEMÁTICA — ALEJANDRO MEDRANO
+Módulo: Transformaciones Geométricas 2D (Actividad #2)
+PixelForge MathEngine 2D v1.0
+================================================================================
+
+1. RELACIÓN CON LA REPRESENTACIÓN 2xN DEL PROYECTO
+------------------------------------------------------------------------------
+El módulo de transformaciones trabaja directamente con la representación creada
+en el módulo Core del proyecto. Cada figura se almacena como una matriz P de
+tamaño 2xN:
+
+    P = [ p1  p2  ...  pN ]
+
+Cada columna es un vector de R²:
+
+    p_i = (x_i, y_i)^T
+
+Esta representación permite transformar todos los puntos de una figura al mismo
+tiempo mediante multiplicación matricial. Si M es una matriz 2x2, entonces:
+
+    P' = M * P
+
+El resultado P' conserva el mismo formato 2xN, pero con las coordenadas ya
+transformadas.
+
+================================================================================
+2. ROTACIÓN
+------------------------------------------------------------------------------
+La rotación permite girar una figura alrededor del origen. Para un ángulo theta,
+la matriz de rotación es:
+
+        [cos(theta)  -sen(theta)]
+    R = [sen(theta)   cos(theta)]
+
+Cuando esta matriz multiplica un punto (x, y)^T, se obtiene:
+
+    x' = x*cos(theta) - y*sen(theta)
+    y' = x*sen(theta) + y*cos(theta)
+
+Por ejemplo, para rotar un cuadrado 45° se usa:
+
+        [0.707  -0.707]
+    R = [0.707   0.707]
+
+Esta matriz coincide con el ejemplo del anexo del proyecto, donde el punto
+(2,0) se transforma aproximadamente en (1.41,1.41).
+
+Interpretación geométrica:
+La rotación cambia la orientación de la figura, pero conserva sus distancias y
+su forma. No aumenta ni disminuye el tamaño del objeto.
+
+================================================================================
+3. ESCALAMIENTO
+------------------------------------------------------------------------------
+El escalamiento cambia el tamaño de una figura. Se utiliza una matriz diagonal:
+
+        [sx  0 ]
+    S = [0   sy]
+
+Al multiplicar la matriz por un punto (x, y)^T:
+
+    x' = sx*x
+    y' = sy*y
+
+Si sx = sy, el escalamiento es uniforme y la figura mantiene sus proporciones.
+Si sx ≠ sy, el objeto se estira de forma diferente en cada eje.
+
+Ejemplo:
+Para escalar por factor 2:
+
+        [2  0]
+    S = [0  2]
+
+Entonces el punto (2,2) se transforma en (4,4).
+
+Interpretación geométrica:
+El escalamiento multiplica las distancias respecto al origen. Si el factor es
+mayor que 1, la figura aumenta de tamaño. Si está entre 0 y 1, la figura se
+contrae.
+
+================================================================================
+4. REFLEXIÓN
+------------------------------------------------------------------------------
+La reflexión invierte la figura respecto a un eje o una recta. En este módulo se
+implementan tres reflexiones principales.
+
+4.1 Reflexión respecto al eje x
+
+        [1   0]
+    F = [0  -1]
+
+Transforma:
+
+    (x, y) → (x, -y)
+
+Mantiene la coordenada x y cambia el signo de la coordenada y.
+
+4.2 Reflexión respecto al eje y
+
+        [-1  0]
+    F = [ 0  1]
+
+Transforma:
+
+    (x, y) → (-x, y)
+
+Mantiene la coordenada y y cambia el signo de la coordenada x.
+
+4.3 Reflexión respecto a la recta y=x
+
+        [0  1]
+    F = [1  0]
+
+Transforma:
+
+    (x, y) → (y, x)
+
+Intercambia las coordenadas de cada punto.
+
+Interpretación geométrica:
+La reflexión conserva las distancias de la figura, pero cambia su orientación
+respecto al eje o recta utilizada.
+
+================================================================================
+5. TRASLACIÓN Y COORDENADAS HOMOGÉNEAS
+------------------------------------------------------------------------------
+La traslación mueve una figura completa sin cambiar su forma ni su tamaño.
+Matemáticamente, un punto (x,y) se transforma en:
+
+    (x, y) → (x + dx, y + dy)
+
+La traslación no es una transformación lineal pura en R² porque no conserva el
+origen. Por ejemplo, si se traslada por (3,-1), el origen (0,0) pasa a (3,-1).
+
+Para poder representarla con matrices, el módulo utiliza coordenadas homogéneas.
+Cada punto (x,y) se amplía a:
+
+    (x, y, 1)^T
+
+La matriz homogénea de traslación es:
+
+        [1  0  dx]
+    T = [0  1  dy]
+        [0  0   1]
+
+Entonces:
+
+        [1  0  dx] [x]   [x + dx]
+    T = [0  1  dy] [y] = [y + dy]
+        [0  0   1] [1]   [   1  ]
+
+Interpretación geométrica:
+La traslación desplaza todos los puntos por la misma cantidad, por lo que la
+figura conserva su forma, tamaño y orientación.
+
+================================================================================
+6. TRANSFORMACIONES CONSECUTIVAS
+------------------------------------------------------------------------------
+El motor permite aplicar varias transformaciones una después de otra. Esto es
+necesario para simular el comportamiento de un motor gráfico real.
+
+Ejemplo:
+
+    Rotar 30° → Escalar 1.5 → Trasladar (2,1)
+
+Si se usan matrices homogéneas, la composición se representa como:
+
+    C = T * S * R
+
+Aunque la rotación se aplica primero, aparece a la derecha en la multiplicación
+porque las matrices actúan sobre los puntos desde la derecha hacia la izquierda:
+
+    P_final = T * S * R * P
+
+El orden de las transformaciones es fundamental. Rotar y luego trasladar no
+produce el mismo resultado que trasladar y luego rotar.
+
+================================================================================
+7. RELACIÓN CON LA PRIMERA PARTE DEL PROYECTO
+------------------------------------------------------------------------------
+En la primera parte del proyecto se estudió que las transformaciones lineales
+pueden representarse mediante matrices. También se analizó la transformación:
+
+    T(x,y) = (x+y, y)
+
+como una cizalladura horizontal usada en motores gráficos 2D. Esta segunda
+parte continúa esa idea, pero ahora se implementan transformaciones concretas
+dentro de un prototipo funcional: rotación, escalamiento, reflexión y traslación.
+
+La implementación demuestra cómo los conceptos del álgebra lineal pueden
+convertirse en código para manipular objetos bidimensionales dentro de un motor
+matemático para software.
+
+================================================================================

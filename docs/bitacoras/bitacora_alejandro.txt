@@ -1,0 +1,149 @@
+================================================================================
+BITÁCORA DE USO DE IA — ALEJANDRO MEDRANO
+Módulo: Transformaciones Geométricas 2D (Actividad #2)
+PixelForge MathEngine 2D v1.0
+================================================================================
+
+INTERACCIÓN #1 — Diseño de la clase Transformador
+------------------------------------------------------------------------------
+OBJETIVO:
+Diseñar una clase Transformador compatible con la clase Objeto2D creada en el
+módulo Core del proyecto. La clase debía aplicar traslación, rotación,
+escalamiento y reflexión, retornando el objeto transformado y la matriz usada.
+
+PROMPT UTILIZADO:
+"Con base en un proyecto de Álgebra Lineal llamado PixelForge MathEngine 2D,
+donde los objetos se almacenan como matrices 2xN mediante una clase Objeto2D,
+diseñe una clase Transformador en Python con NumPy. Debe incluir métodos para
+trasladar, rotar, escalar y reflejar. Cada método debe retornar el objeto
+transformado y la matriz utilizada. No utilice funciones prohibidas como
+numpy.linalg.inv, numpy.linalg.eig o numpy.linalg.matrix_rank."
+
+RESPUESTA OBTENIDA:
+La IA propuso una clase Transformador con métodos trasladar(), rotar(),
+escalar() y reflejar(). También sugirió usar multiplicación matricial básica
+para rotación, escalamiento y reflexión. Para la traslación recomendó usar
+coordenadas homogéneas, porque la traslación no es una transformación lineal
+pura en R².
+
+DECISIÓN TOMADA POR EL EQUIPO:
+Se aceptó la estructura de clase Transformador y se mantuvo la representación
+2xN del objeto original. Se decidió que cada método retornara exactamente dos
+elementos: el nuevo Objeto2D transformado y la matriz utilizada.
+
+VALIDACIÓN MATEMÁTICA REALIZADA:
+Se verificó que para una matriz de puntos P de forma 2xN, las transformaciones
+lineales se pueden aplicar como M*P. Además, se confirmó que la traslación
+requiere ampliar los puntos a coordenadas homogéneas (x,y,1)^T para poder
+representarse mediante una matriz 3x3.
+
+MODIFICACIONES IMPLEMENTADAS:
+Se agregó validación de tipo para asegurar que el objeto recibido sea una
+instancia de Objeto2D. También se agregó una función interna para crear el nuevo
+Objeto2D transformado sin modificar el objeto original.
+
+REFLEXIÓN SOBRE LA UTILIDAD DE LA IA:
+La IA fue útil para proponer una estructura inicial clara y compatible con el
+módulo de José. Sin embargo, el equipo revisó la justificación matemática para
+confirmar que las matrices usadas correspondieran correctamente a cada
+transformación.
+
+================================================================================
+INTERACCIÓN #2 — Validación de matrices de transformación
+------------------------------------------------------------------------------
+OBJETIVO:
+Revisar matemáticamente las matrices de rotación, escalamiento, reflexión y
+traslación antes de integrarlas al repositorio.
+
+PROMPT UTILIZADO:
+"Verifique si estas matrices son correctas para un motor 2D: rotación con
+[[cos(theta), -sin(theta)], [sin(theta), cos(theta)]], escalamiento con
+[[sx,0],[0,sy]], reflexión eje x con [[1,0],[0,-1]], reflexión eje y con
+[[-1,0],[0,1]], reflexión y=x con [[0,1],[1,0]] y traslación homogénea con
+[[1,0,dx],[0,1,dy],[0,0,1]]. Explique qué hace cada una."
+
+RESPUESTA OBTENIDA:
+La IA confirmó que las matrices eran correctas. Explicó que la rotación cambia
+la orientación alrededor del origen, el escalamiento modifica el tamaño según
+los factores sx y sy, las reflexiones invierten la figura respecto al eje o
+recta indicada y la traslación mueve todos los puntos usando coordenadas
+homogéneas.
+
+DECISIÓN TOMADA POR EL EQUIPO:
+Se mantuvieron esas matrices como base del módulo. Además, se decidió recibir
+el ángulo de rotación en grados para coincidir con el anexo del proyecto, donde
+aparecen ejemplos como 45° y 30°.
+
+VALIDACIÓN MATEMÁTICA REALIZADA:
+Se verificaron transformaciones puntuales:
+  - Rotación 45°: (2,0) → (1.414,1.414)
+  - Escalamiento por 2: (2,2) → (4,4)
+  - Reflexión eje x: (2,3) → (2,-3)
+  - Reflexión eje y: (2,3) → (-2,3)
+  - Reflexión y=x: (2,3) → (3,2)
+  - Traslación dx=3, dy=-1: (2,2) → (5,1)
+
+MODIFICACIONES IMPLEMENTADAS:
+Se configuró rotar() para convertir grados a radianes internamente mediante
+math.radians(). También se permitió que escalar() use escalamiento uniforme si
+solo se proporciona sx.
+
+REFLEXIÓN SOBRE LA UTILIDAD DE LA IA:
+La IA ayudó a confirmar la coherencia entre la teoría de álgebra lineal y la
+implementación computacional. La validación manual fue necesaria para asegurar
+que los signos de la matriz de rotación y las reflexiones fueran correctos.
+
+================================================================================
+INTERACCIÓN #3 — Casos de prueba del módulo de transformaciones
+------------------------------------------------------------------------------
+OBJETIVO:
+Crear casos de prueba completos para demostrar el funcionamiento del módulo de
+transformaciones y cumplir con la rúbrica del proyecto.
+
+PROMPT UTILIZADO:
+"Genere un archivo test_transformaciones.py para probar una clase Transformador.
+Debe validar traslación, rotación 45°, escalamiento por 2, reflexión respecto al
+eje x, reflexión respecto al eje y, reflexión respecto a y=x y una secuencia de
+transformaciones: rotar 30°, escalar 1.5 y trasladar. Debe imprimir la figura
+original, matriz utilizada y coordenadas transformadas."
+
+RESPUESTA OBTENIDA:
+La IA propuso un archivo de pruebas con assert y comparación aproximada usando
+np.allclose(), debido a que las rotaciones generan números decimales. También
+incluyó una prueba de transformaciones consecutivas y una validación de error
+cuando se intenta reflejar respecto a un eje no soportado.
+
+DECISIÓN TOMADA POR EL EQUIPO:
+Se aceptó el uso de np.allclose() únicamente para comparar resultados numéricos
+en las pruebas. No se considera una función prohibida porque no resuelve los
+algoritmos principales; solo valida igualdad aproximada en cálculos con números
+decimales.
+
+VALIDACIÓN MATEMÁTICA REALIZADA:
+Se compararon los resultados del programa con resultados calculados
+manualmente. En el caso de rotación 45°, se validó contra la matriz:
+
+    [[0.707, -0.707],
+     [0.707,  0.707]]
+
+Para las transformaciones consecutivas se construyó la matriz compuesta:
+
+    C = T * S * R
+
+respetando el orden de aplicación rotar → escalar → trasladar.
+
+MODIFICACIONES IMPLEMENTADAS:
+Se agregaron impresiones detalladas en las pruebas para mostrar:
+  - Objeto original
+  - Matriz utilizada
+  - Objeto transformado
+  - Coordenadas transformadas
+  - Matriz compuesta en el caso consecutivo
+
+REFLEXIÓN SOBRE LA UTILIDAD DE LA IA:
+La IA facilitó la generación de pruebas completas, pero la revisión matemática
+fue indispensable para confirmar que cada resultado esperado correspondiera a
+la transformación correcta. Esto ayuda a preparar tanto el código como la
+presentación del proyecto.
+
+================================================================================
